@@ -1,5 +1,6 @@
 {
   "name": "regatta",
+  "homepage": "https://jahanzeb1018.github.io/TFG_REGATTA/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,12 +8,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
     "aos": "^2.3.4",
     "d3-geo": "^3.1.1",
+    "gh-pages": "^6.3.0",
     "mapbox-gl": "^3.9.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
