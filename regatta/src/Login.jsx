@@ -1,31 +1,40 @@
-import { useState } from "react";
-import "./App.css";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Login({ onLogin }) {
-  const [email, setEmail] = useState("");
+const Login = () => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    if (email === "1@1" && password === "1") {
-      onLogin(true);
+    if (username === "admin" && password === "password") {
+      navigate("/map"); // 🔹 Redirigir a la pantalla de MAP 2D
     } else {
-      alert("Invalid credentials! Try user@example.com / password");
+      alert("Usuario o contraseña incorrectos");
     }
   };
 
   return (
-    <div className="auth-form-container">
+    <div className="login-container">
       <h2>Login</h2>
-      <form className="login-form" onSubmit={handleSubmit}>
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        
-        <button type="submit">Login</button>
+      <form onSubmit={handleLogin}>
+        <input
+          type="text"
+          placeholder="Usuario"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Ingresar</button>
       </form>
     </div>
   );
-}
+};
+
+export default Login;
