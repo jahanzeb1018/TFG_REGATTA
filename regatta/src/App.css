@@ -81,3 +81,53 @@ button:hover {
   color: white;
   font-family: Arial, sans-serif;
 }
+
+.twoD-btn {
+  position: absolute;
+  top: 20px;
+  right: 120px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.twoD-btn:hover {
+  background: #0056b3;
+}
+
+.floating-menu {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.menu-btn {
+  background: rgba(0, 123, 255, 0.9);
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0, 86, 179, 1);
+}
+
+.logout-btn {
+  background: rgba(255, 69, 58, 0.9);
+}
+
+.logout-btn:hover {
+  background: rgba(200, 40, 30, 1);
+}

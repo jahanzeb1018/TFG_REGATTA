@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Water } from "three/examples/jsm/objects/Water.js";
@@ -8,60 +9,60 @@ import "./App.css";
 
 const Scene = () => {
   const mountRef = useRef(null);
+  const navigate = useNavigate(); // 🔹 Hook para redirección
 
   useEffect(() => {
     let camera, scene, renderer, controls, water, sun, boat, barcelona;
     const loader = new GLTFLoader();
 
     class Boat {
-        constructor() {
-          this.boat = null;
-          this.speed = { vel: 0, rot: 0 };
-          this.velocity = new THREE.Vector3(0, 0, 0);
-          this.targetHeight = 0;
-          this.smoothness = 0.01;
-          this.balanceAmplitude = 0.07;
-          this.balanceFrequency = 0.001;
-      
-          // 🚀 Cargar el modelo de manera asíncrona
-          loader.load("/src/assets/boat/scene.gltf", (gltf) => {
-            scene.add(gltf.scene);
-            gltf.scene.scale.set(3, 3, 3);
-            gltf.scene.position.set(5, 1.9, 50);
-            gltf.scene.rotation.y = -1.5;
-      
-            this.boat = gltf.scene;
-            gltf.scene.traverse((child) => {
-              if (child.isMesh) {
-                child.material.needsUpdate = true;
-              }
-            });
+      constructor() {
+        this.boat = null;
+        this.speed = { vel: 0, rot: 0 };
+        this.velocity = new THREE.Vector3(0, 0, 0);
+        this.targetHeight = 0;
+        this.smoothness = 0.01;
+        this.balanceAmplitude = 0.07;
+        this.balanceFrequency = 0.001;
+
+        // 🚀 Cargar el modelo de manera asíncrona
+        loader.load("/src/assets/boat/scene.gltf", (gltf) => {
+          scene.add(gltf.scene);
+          gltf.scene.scale.set(3, 3, 3);
+          gltf.scene.position.set(5, 1.9, 50);
+          gltf.scene.rotation.y = -1.5;
+
+          this.boat = gltf.scene;
+          gltf.scene.traverse((child) => {
+            if (child.isMesh) {
+              child.material.needsUpdate = true;
+            }
           });
-        }
-      
-        update() {
-          if (this.boat) {
-            this.boat.rotation.y += this.speed.rot;
-            this.boat.position.z += this.speed.vel;
-      
-            const waterHeight = this.getWaterHeight(this.boat.position.x, this.boat.position.z);
-            this.targetHeight = waterHeight;
-            this.boat.position.y += (this.targetHeight - this.boat.position.y) * this.smoothness;
-      
-            const time = Date.now();
-            this.boat.rotation.z = Math.sin(time * this.balanceFrequency) * this.balanceAmplitude;
-            this.boat.rotation.x = Math.cos(time * this.balanceFrequency * 0.5) * this.balanceAmplitude * 0.5;
-      
-            this.velocity.z = this.speed.vel * 0.95;
-            this.boat.position.z += this.velocity.z;
-          }
-        }
-      
-        getWaterHeight(x, z) {
-          return Math.sin(x * 0.1 + Date.now() * 0.005) * 2;
+        });
+      }
+
+      update() {
+        if (this.boat) {
+          this.boat.rotation.y += this.speed.rot;
+          this.boat.position.z += this.speed.vel;
+
+          const waterHeight = this.getWaterHeight(this.boat.position.x, this.boat.position.z);
+          this.targetHeight = waterHeight;
+          this.boat.position.y += (this.targetHeight - this.boat.position.y) * this.smoothness;
+
+          const time = Date.now();
+          this.boat.rotation.z = Math.sin(time * this.balanceFrequency) * this.balanceAmplitude;
+          this.boat.rotation.x = Math.cos(time * this.balanceFrequency * 0.5) * this.balanceAmplitude * 0.5;
+
+          this.velocity.z = this.speed.vel * 0.95;
+          this.boat.position.z += this.velocity.z;
         }
       }
-      
+
+      getWaterHeight(x, z) {
+        return Math.sin(x * 0.1 + Date.now() * 0.005) * 2;
+      }
+    }
 
     class Barcelona {
       constructor() {
@@ -73,12 +74,8 @@ const Scene = () => {
         });
       }
 
-      update() {
-        // Puede usarse en el futuro si la ciudad necesita animaciones
-      }
+      update() {}
     }
-
-    
 
     function init() {
       renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -95,7 +92,6 @@ const Scene = () => {
 
       sun = new THREE.Vector3();
 
-      // Luz
       const light = new THREE.DirectionalLight(0xffffff, 2);
       light.position.set(-500, 100, 750);
       scene.add(light);
@@ -103,7 +99,6 @@ const Scene = () => {
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
 
-      // Agua
       const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
       water = new Water(waterGeometry, {
         textureWidth: 512,
@@ -120,7 +115,6 @@ const Scene = () => {
       water.rotation.x = -Math.PI / 2;
       scene.add(water);
 
-      // Skybox
       const sky = new Sky();
       sky.scale.setScalar(10000);
       scene.add(sky);
@@ -195,7 +189,13 @@ const Scene = () => {
     };
   }, []);
 
-  return <div ref={mountRef} id="scene-container"></div>;
+  return (
+    <div ref={mountRef} id="scene-container">
+      <div className="floating-menu">
+        <button className="menu-btn" onClick={() => navigate("/map")}>🗺️ Vista 2D</button>
+      </div>
+    </div>
+  );
 };
 
 export default Scene;
