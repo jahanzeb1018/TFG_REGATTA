@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useNavigate } from "react-router-dom";
-import BoatMarker from "./BoatMarker"; // 📌 Componente para mostrar barcos
+import BoatMarker from "./BoatMarker"; 
 import io from "socket.io-client";
 import "./Map2D.css";
 
 const socket = io("https://server-production-c33c.up.railway.app/");
 
-// 📌 Componente para ajustar la vista del mapa
+// 📌 Componente para centrar el mapa en los barcos activos
 const MapUpdater = ({ boats }) => {
   const map = useMap();
 
@@ -30,12 +30,14 @@ const Map2D = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
+  // 📌 Recibir datos de WebSocket en tiempo real
   useEffect(() => {
     socket.on("updateLocation", (data) => {
-      console.log("Datos de ubicación recibidos:", data);
+      console.log("📡 Datos de ubicación recibidos:", data);
       setBoats((prevBoats) => {
         const now = Date.now();
         const boatIndex = prevBoats.findIndex((boat) => boat.id === data.id);
+
         if (boatIndex !== -1) {
           prevBoats[boatIndex] = {
             ...prevBoats[boatIndex],
@@ -61,6 +63,7 @@ const Map2D = () => {
     return () => socket.disconnect();
   }, []);
 
+  // 📌 Filtrar barcos inactivos (últimos 10s)
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
@@ -72,6 +75,7 @@ const Map2D = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // 📌 Enviar mensajes en el chat
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       setMessages([...messages, { text: newMessage, sender: "You" }]);
@@ -81,7 +85,7 @@ const Map2D = () => {
 
   return (
     <div className="map">
-      <MapContainer center={[42.234, -8.755]} zoom={13} style={{ width: "100%", height: "100vh" }}>
+      <MapContainer center={[41.3851, 2.1734]} zoom={13} style={{ width: "100%", height: "100vh" }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap contributors' />
         <MapUpdater boats={boats} />
         {boats.map((boat, index) => (
@@ -89,19 +93,22 @@ const Map2D = () => {
         ))}
       </MapContainer>
 
+      {/* Botones de control */}
       <button className="logout-btn" onClick={() => navigate("/")}>Logout</button>
       <button className="help-btn" onClick={() => setShowHelp(true)}>Help</button>
       <button className="chat-btn" onClick={() => setShowChat(!showChat)}>Chat</button>
       <button className="threeD-btn" onClick={() => navigate("/scene")}>3D</button>
 
+      {/* Modal de ayuda */}
       {showHelp && (
         <div className="help-modal">
           <h2>Help Information</h2>
-          <p>Here is some information about how to use the application...</p>
+          <p>Use this map to track the location of boats in real time.</p>
           <button onClick={() => setShowHelp(false)}>Close</button>
         </div>
       )}
 
+      {/* Chat emergente */}
       {showChat && (
         <div className="chat-popup">
           <h3>Chat</h3>
